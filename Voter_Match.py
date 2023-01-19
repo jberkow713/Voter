@@ -20,6 +20,7 @@ class Search_List:
     def __init__(self, csv,num_districts):
         self.csv = csv
         self.df = self.create_df()
+        self.row_indices = self.df.index.values.tolist()
         self.num_districts = num_districts
         self.districts = self.create_districts()
          
@@ -47,12 +48,13 @@ class Search_List:
 
 Search = Search_List("voter_data.csv",4)
 Search_df = Search.df
-print(Search_df)
 
 # This is the amount of rows to search through
 # print(Search.shape[0])
+Indices = Search.row_indices
+Current = Indices[0]
 
-First_Search = Search_df.loc[299].to_list()
+First_Search = Search_df.loc[Current].to_list()
 # This is the ID you're looking for
 print(First_Search)
 
@@ -83,17 +85,9 @@ for district in Search.districts:
 
         current = D[max_value]
         ID =int(max_value[2:])
-
 print(current)
 print(ID)
-    # First_Search['ID']=int(max_value[2:])
-    
 
-# print(New.values.tolist())
-    
-# print(D_1.loc[((D_1['LAST_NAME'] == L_name) & (D_1['FIRST_NAME'] == F_name)) & \
-#     (D_1['birth_year'] == Year) ])
+# Now finally insert the ID at the CURRENT index in the df
 
-# print(District_Search)
-# print(Final_Search)
 
