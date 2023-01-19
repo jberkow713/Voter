@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 
 class District:
+    '''
+    Creates dataframe for a given txt file
+    '''
     def __init__(self, num):
         self.txt = f'District_{num}.txt'
         self.df = self.create_df()
@@ -17,6 +20,9 @@ class District:
         return District.apply(lambda x: x.astype(str).str.lower())
 
 class Search_List:
+    '''
+    Creates a list of districts to compare to, creates a dataframe to search from
+    '''
     def __init__(self, csv,num_districts):
         self.csv = csv
         self.df = self.create_df()
@@ -37,57 +43,57 @@ class Search_List:
         usable_csv = ['LAST_NAME', 'FIRST_NAME', 'RESIDENTIAL_ZIP', 'RESIDENTIAL_CITY', 'birth_year','ID']
         Final_Search = Search[usable_csv]        
         return Final_Search.apply(lambda x: x.astype(str).str.lower())
+    
     def create_districts(self):
         Districts = []
         for i in range(1,self.num_districts+1):
-            Districts.append(District(i).df)
-        print(Districts)    
+            Districts.append(District(i).df)           
         return Districts
+    
+    def find_IDS(self):
+        '''
+        Finds missing IDs based on the stored dataframes by looking for highest
+        probability match
+        '''
+        
+        for i in range(len(self.row_indices)):
+            Current = self.row_indices[i]            
 
+            Current_Search = self.df.loc[Current].to_list()
+            # This is the ID you're looking for            
+            L_name = Current_Search[0]
+            current = 0
+            ID = None
+            for district in self.districts:
+                
+                New = district.loc[district['LAST_NAME']==L_name]
+                D = {}
 
+                if len(New.values.tolist())>0:                    
+                    for name in New.values.tolist():
+                        count = 0
+                        compare = name[:4]
+                        id = name[5]
+                        for i in range(4):
+                            if Current_Search[i]==compare[i]:
+                                count+=1
+                        D[id]=count         
+                
+                    max_value = max(D, key=D.get)
+                    
+                    if D[max_value]>current:
+
+                        current = D[max_value]
+                        ID =int(max_value[2:])
+            
+            Search.df.at[Current,'ID']=ID
+        return Search.df
+
+        
 
 Search = Search_List("voter_data.csv",4)
-Search_df = Search.df
+Search.find_IDS()
+print(Search.df)
 
-# This is the amount of rows to search through
-# print(Search.shape[0])
-Indices = Search.row_indices
-Current = Indices[0]
-
-First_Search = Search_df.loc[Current].to_list()
-# This is the ID you're looking for
-print(First_Search)
-
-L_name = First_Search[0]
-
-# print(District.loc[District['RESIDENTIAL_ZIP']==Zip])
-
-current = 0
-ID = None
-for district in Search.districts:
-    
-    New = district.loc[district['LAST_NAME']==L_name]
-    D = {}
-
-    if len(New.values.tolist())>0:
-        
-        for name in New.values.tolist():
-            count = 0
-            compare = name[:4]
-            id = name[5]
-            for i in range(4):
-                if First_Search[i]==compare[i]:
-                    count+=1
-            D[id]=count         
-
-    max_value = max(D, key=D.get)
-    if D[max_value]>current:
-
-        current = D[max_value]
-        ID =int(max_value[2:])
-print(current)
-print(ID)
-
-# Now finally insert the ID at the CURRENT index in the df
 
 
