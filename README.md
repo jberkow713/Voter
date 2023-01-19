@@ -12,4 +12,4 @@ birth year, etc, matches up, is linked to their profile. Then, the new dataframe
 to CSV.
 
 This entire process can be automated, and should be very quick and accurate for every person 
-in all the districts, using this one connected Class.
+in all the districts, using this one connected Class in Voter_Match.py.
