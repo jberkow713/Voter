@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 class District:
     '''
@@ -54,11 +53,9 @@ class Search_List:
         '''
         Finds missing IDs based on the stored dataframes by looking for highest
         probability match
-        '''
-        
+        '''        
         for i in range(len(self.row_indices)):
-            Current = self.row_indices[i]            
-
+            Current = self.row_indices[i]
             Current_Search = self.df.loc[Current].to_list()
             # This is the ID you're looking for            
             L_name = Current_Search[0]
@@ -68,7 +65,6 @@ class Search_List:
                 
                 New = district.loc[district['LAST_NAME']==L_name]
                 D = {}
-
                 if len(New.values.tolist())>0:                    
                     for name in New.values.tolist():
                         count = 0
@@ -79,21 +75,18 @@ class Search_List:
                                 count+=1
                         D[id]=count         
                 
-                    max_value = max(D, key=D.get)
-                    
+                    max_value = max(D, key=D.get)                    
                     if D[max_value]>current:
-
                         current = D[max_value]
                         ID =int(max_value[2:])
             
             Search.df.at[Current,'ID']=ID
+            Search.df.to_csv('Voter_Data.csv')
         return Search.df
-
-        
 
 Search = Search_List("voter_data.csv",4)
 Search.find_IDS()
-print(Search.df)
+
 
 
 
